@@ -6,6 +6,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"github.com/fatih/color"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
 	"io/ioutil"
@@ -45,7 +46,8 @@ func main() {
 }
 
 func runClientTest() {
-	var errCount int
+	var errors []error
+
 	deadline := 3 * time.Second
 	client, err := net.Dial("tcp", ":8888")
 	if err != nil {
@@ -77,11 +79,10 @@ func runClientTest() {
 
 		actual := receiveWithDeadline(tx, deadline)
 		if !bytes.Equal(actual, tc.output) {
-			errCount++
-			log.Printf(
-				"🚫 Failed command test case[%d]: expected '%s', received '%s'\n",
-				i, tc.output, actual,
-			)
+			errors = append(errors, fmt.Errorf(
+				"expected '%s'; received '%s'\n- command (case[%d])",
+				string(tc.output), string(actual), i,
+			))
 		}
 	}
 
@@ -156,19 +157,21 @@ func runClientTest() {
 		for j, b := range tc.output {
 			actual := receiveWithDeadline(tx, deadline)
 			if !bytes.Equal(actual, b) {
-				errCount++
-				log.Printf(
-					"🚫 Failed transaction test case[%d], command[%d]: expected '%s', received '%s'\n",
-					i, j, string(b), string(actual),
-				)
+				errors = append(errors, fmt.Errorf(
+					"expected '%s'; received '%s'\n- transaction (case[%d], command[%d])",
+					string(b), string(actual), i, j,
+				))
 			}
 		}
 	}
 
-	if errCount == 0 {
+	if len(errors) == 0 {
 		fmt.Println("✅ All tests passed")
 	} else {
-		fmt.Printf("🚫 Failed %d tests.\n", errCount)
+		fmt.Printf("🚫 Failed %d tests.\n", len(errors))
+		for _, err := range errors {
+			fmt.Fprintln(os.Stderr, color.HiRedString("%v", err))
+		}
 		os.Exit(1)
 	}
 }
