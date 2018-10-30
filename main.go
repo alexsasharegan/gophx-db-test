@@ -313,8 +313,13 @@ func runBenchmark() {
 	defer w.Flush()
 
 	results := [][]string{
-		{"Clients", "Duration", "Messages Sent & Received"},
-		{strconv.Itoa(concurrency), benchDuration.String(), p.Sprintf("%d", totalMessages)},
+		{"Clients", "Duration", "Messages Sent & Received", "Messages/Second"},
+		{
+			strconv.Itoa(concurrency),
+			benchDuration.String(),
+			p.Sprintf("%d", totalMessages),
+			p.Sprintf("%.2f", float64(totalMessages)/benchDuration.Seconds()),
+		},
 	}
 
 	for _, r := range results {
