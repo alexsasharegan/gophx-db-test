@@ -307,7 +307,9 @@ func runBenchmark() {
 	}
 
 	log.Println(fmt.Sprintf("Running benchmark for %s", benchDuration))
+	start := time.Now()
 	<-ctx.Done()
+	totalTime := time.Now().Sub(start)
 	log.Println("Benchmark complete.")
 
 	var totalMessages int
@@ -323,9 +325,9 @@ func runBenchmark() {
 		{"Clients", "Duration", "Messages Sent & Received", "Messages/Second"},
 		{
 			strconv.Itoa(concurrency),
-			benchDuration.String(),
+			totalTime.String(),
 			p.Sprintf("%d", totalMessages),
-			p.Sprintf("%.f", math.Trunc(float64(totalMessages)/benchDuration.Seconds())),
+			p.Sprintf("%.f", math.Trunc(float64(totalMessages)/totalTime.Seconds())),
 		},
 	}
 
