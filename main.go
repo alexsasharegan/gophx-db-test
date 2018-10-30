@@ -10,6 +10,7 @@ import (
 	"golang.org/x/text/message"
 	"io/ioutil"
 	"log"
+	"math"
 	"net"
 	"os"
 	"runtime"
@@ -318,7 +319,7 @@ func runBenchmark() {
 			strconv.Itoa(concurrency),
 			benchDuration.String(),
 			p.Sprintf("%d", totalMessages),
-			p.Sprintf("%.2f", float64(totalMessages)/benchDuration.Seconds()),
+			p.Sprintf("%f", math.Trunc(float64(totalMessages)/benchDuration.Seconds())),
 		},
 	}
 
