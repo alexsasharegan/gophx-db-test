@@ -168,6 +168,7 @@ func runClientTest() {
 		fmt.Println("✅ All tests passed")
 	} else {
 		fmt.Printf("🚫 Failed %d tests.\n", errCount)
+		os.Exit(1)
 	}
 }
 
