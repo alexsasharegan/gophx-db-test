@@ -27,7 +27,7 @@ var (
 	verbose = flag.Bool(
 		"v", false, "Run with extra logging",
 	)
-	numClients = flag.Int(
+	procs = flag.Int(
 		"procs", runtime.NumCPU()*2,
 		"Sets the number of clients that will interact with the DB during the benchmark",
 	)
@@ -196,7 +196,7 @@ type benchTransaction struct {
 }
 
 func runBenchmark() {
-	concurrency := *numClients
+	concurrency := *procs
 	benchDuration := time.Second * time.Duration(*benchTime)
 	clients := make([]*benchTestClient, concurrency)
 	if !*verbose {
@@ -319,7 +319,7 @@ func runBenchmark() {
 			strconv.Itoa(concurrency),
 			benchDuration.String(),
 			p.Sprintf("%d", totalMessages),
-			p.Sprintf("%f", math.Trunc(float64(totalMessages)/benchDuration.Seconds())),
+			p.Sprintf("%.f", math.Trunc(float64(totalMessages)/benchDuration.Seconds())),
 		},
 	}
 
