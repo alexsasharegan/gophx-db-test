@@ -28,7 +28,7 @@ var (
 		"v", false, "Run with extra logging",
 	)
 	procs = flag.Int(
-		"procs", runtime.NumCPU()*2,
+		"procs", runtime.NumCPU(),
 		"Sets the number of clients that will interact with the DB during the benchmark",
 	)
 	benchTime = flag.Int(
@@ -283,18 +283,21 @@ func runBenchmark() {
 
 	for _, btc := range clients {
 		go func(btc *benchTestClient) {
+			var i int
+			tlen := len(btc.transactions)
+
 			for {
-				for _, t := range btc.transactions {
-					select {
-					case <-ctx.Done():
-						return
-					default:
-						btc.conn.Write(t.data)
-						for i := 0; i < t.count; i++ {
-							<-btc.rx
-						}
-						btc.count += t.count
+				t := btc.transactions[i%tlen]
+				i++
+				select {
+				case <-ctx.Done():
+					return
+				default:
+					btc.conn.Write(t.data)
+					for j := 0; j < t.count; j++ {
+						<-btc.rx
 					}
+					btc.count += t.count
 				}
 			}
 		}(btc)

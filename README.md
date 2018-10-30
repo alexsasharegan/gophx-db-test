@@ -27,7 +27,7 @@ are flags to configure the benchmark characteristics:
 - `-time` (integer): Sets the duration of the benchmark in seconds _(defaults to
   10 seconds)_.
 - `-procs` (integer): Sets the number of clients that will interact with the DB
-  during the benchmark _(defaults to 2x number of CPUs)_.
+  during the benchmark _(defaults to number of CPUs)_.
 - `-v`: Outputs extra logging.
 
 You should ensure your database passes test before running a benchmark. In any
