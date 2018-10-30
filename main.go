@@ -44,6 +44,7 @@ func main() {
 }
 
 func runClientTest() {
+	var errCount int
 	deadline := 3 * time.Second
 	client, err := net.Dial("tcp", ":8888")
 	if err != nil {
@@ -75,8 +76,9 @@ func runClientTest() {
 
 		actual := receiveWithDeadline(tx, deadline)
 		if !bytes.Equal(actual, tc.output) {
-			log.Fatalf(
-				"🚫 Failed command test case[%d]: expected '%s', received '%s'",
+			errCount++
+			log.Printf(
+				"🚫 Failed command test case[%d]: expected '%s', received '%s'\n",
 				i, tc.output, actual,
 			)
 		}
@@ -138,7 +140,6 @@ func runClientTest() {
 			},
 		},
 	}
-
 	for i, tc := range ttTrans {
 		client.Write([]byte("BEGIN\r\n"))
 		for j, b := range tc.input {
@@ -154,15 +155,20 @@ func runClientTest() {
 		for j, b := range tc.output {
 			actual := receiveWithDeadline(tx, deadline)
 			if !bytes.Equal(actual, b) {
-				log.Fatalf(
-					"🚫 Failed transaction test case[%d], command[%d]: expected '%s', received '%s'",
-					i, j, b, actual,
+				errCount++
+				log.Printf(
+					"🚫 Failed transaction test case[%d], command[%d]: expected '%s', received '%s'\n",
+					i, j, string(b), string(actual),
 				)
 			}
 		}
 	}
 
-	fmt.Println("✅ All tests passed")
+	if errCount == 0 {
+		fmt.Println("✅ All tests passed")
+	} else {
+		fmt.Printf("🚫 Failed %d tests.\n", errCount)
+	}
 }
 
 func receiveWithDeadline(tx <-chan []byte, d time.Duration) (b []byte) {
