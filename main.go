@@ -299,8 +299,8 @@ func runBenchmark() {
 					btc.conn.Write(t.data)
 					for j := 0; j < t.count; j++ {
 						<-btc.rx
+						btc.count++
 					}
-					btc.count += t.count
 				}
 			}
 		}(btc)
