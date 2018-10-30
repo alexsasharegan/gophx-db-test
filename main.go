@@ -244,7 +244,7 @@ func runBenchmark() {
 					},
 					nil,
 				),
-				3,
+				2,
 			},
 			{[]byte(fmt.Sprintf("SET client %d\r\n", i)), 1},
 			{[]byte("GET client\r\n"), 1},
@@ -302,7 +302,7 @@ func runBenchmark() {
 	}
 
 	p := message.NewPrinter(language.AmericanEnglish)
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 4, ' ', tabwriter.AlignRight|tabwriter.Debug)
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 4, ' ', tabwriter.AlignRight)
 	defer w.Flush()
 
 	results := [][]string{
@@ -325,7 +325,7 @@ func connectDB() net.Conn {
 }
 
 func scanLines(conn net.Conn) <-chan []byte {
-	tx := make(chan []byte)
+	tx := make(chan []byte, 4)
 
 	go func() {
 		rd := bufio.NewScanner(conn)

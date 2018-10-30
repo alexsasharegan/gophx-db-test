@@ -5,8 +5,8 @@ A test tool for the Golang Phoenix database meetup in October 2018.
 ## Test Your Database
 
 To run a validation of your database implementation, first start your
-application so it's listening on the required port. Then go get this test repo,
-move into it's directory, build the binary, and run it:
+application so it's listening on the required port. Then `go get` this test
+repo, move into it's directory, build the binary, and run it:
 
 ```sh
 go get github.com/alexsasharegan/gophx-db-test
@@ -28,9 +28,14 @@ are flags to configure the benchmark characteristics:
   10 seconds)_.
 - `-procs` (integer): Sets the number of clients that will interact with the DB
   during the benchmark _(defaults to 2x number of CPUs)_.
+- `-v`: Outputs extra logging.
+
+You should ensure your database passes test before running a benchmark. In any
+case, the benchmark will also force a failure if it does not complete 1 second
+after the benchmark duration.
 
 To run a benchmark of your database implementation, first start your application
-so it's listening on the required port. Then go get this test repo, move into
+so it's listening on the required port. Then `go get` this test repo, move into
 it's directory, build the binary, and run it:
 
 ```sh
